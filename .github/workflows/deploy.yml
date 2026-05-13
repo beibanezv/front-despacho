@@ -25,6 +25,9 @@ jobs:
           context: .
           push: true
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/front-despacho:latest
+          build-args: |
+            VITE_API_DESPACHOS_URL=${{ secrets.VITE_API_DESPACHOS_URL }}
+            VITE_API_VENTAS_URL=${{ secrets.VITE_API_VENTAS_URL }}
 
       - name: Deploy en EC2
         uses: appleboy/ssh-action@v1.0.3
