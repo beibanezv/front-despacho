@@ -7,15 +7,29 @@ export const TableCompras = () => {
   const [ventas, setVentas] = useState([]);
 
   const compras = async () => {
-    await axios.get(`${import.meta.env.VITE_API_VENTAS_URL}/api/v1/ventas`, {
-      headers:{
-        'Content-Type': 'application/json',
-        'Accept': 'application/json'
-  }
-    }).then((response) => {
-      console.log(response.data);
-      setVentas(response.data);
-    });
+    try {
+      const response = await axios.get(
+        `${import.meta.env.VITE_API_VENTAS_URL}/api/v1/ventas`,
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Accept: "application/json",
+          },
+        }
+      );
+
+      const ventasResponse = Array.isArray(response.data)
+        ? response.data
+        : Array.isArray(response.data?.content)
+        ? response.data.content
+        : [];
+
+      console.log(ventasResponse);
+      setVentas(ventasResponse);
+    } catch (error) {
+      console.error("Error cargando ventas:", error);
+      setVentas([]);
+    }
   };
   // Llamada a la función para obtener los datos cuando el componente se monta
   useEffect(() => {
@@ -49,7 +63,7 @@ export const TableCompras = () => {
               </thead>
               <tbody>
                 {ventas
-                  .filter((venta) => !venta.despachoGenerado)
+                  .filter((venta) => !venta?.despachoGenerado)
                   .map((venta) => (
                     <tr key={venta.idVenta}>
                       <td className="pr-10 py-10 items-center">

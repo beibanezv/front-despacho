@@ -7,17 +7,29 @@ export const TableDespachos = () => {
   const [despachos, setDespachos] = useState([]);
 
   const despacho = async () => {
-    await axios
-      .get(`${import.meta.env.VITE_API_DESPACHOS_URL}/api/v1/despachos`, {
-        headers:{
-              'Content-Type': 'application/json',
-              'Accept': 'application/json'
+    try {
+      const response = await axios.get(
+        `${import.meta.env.VITE_API_DESPACHOS_URL}/api/v1/despachos`,
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Accept: "application/json",
+          },
         }
-      })
-      .then((response) => {
-        console.log(response.data);
-        setDespachos(response.data);
-      });
+      );
+
+      const despachosResponse = Array.isArray(response.data)
+        ? response.data
+        : Array.isArray(response.data?.content)
+        ? response.data.content
+        : [];
+
+      console.log(despachosResponse);
+      setDespachos(despachosResponse);
+    } catch (error) {
+      console.error("Error cargando despachos:", error);
+      setDespachos([]);
+    }
   };
   // Llamada a la función para obtener los datos cuando el componente se monta
   useEffect(() => {
